@@ -235,7 +235,17 @@ class Bot
             if (self::STATUS_ARCHIVE === $task_status) {
                 $text = "<i>{$task->Name}</i>";
             } elseif (self::STATUS_UPCOMING === $task_status) {
-                $text = "{$task->Name}<i>\n".date('Y.m.d H:i:s', time()).'</i>';
+                $upcoming = head(array_filter(
+                    $state->upcoming_tasks,
+                    function($upcoming) use ($task) {
+                        return $task->Id == $upcoming->id;
+                    }
+                ));
+                $upcoming_at = $upcoming
+                    ? date('Y.m.d H:i', $upcoming->upcoming_at)
+                    : 'на неопределенный срок';
+
+                $text = "{$task->Name}<i>\n".$upcoming_at.'</i>';
             } else {
                 $text = "{$task->Name}";
             }
