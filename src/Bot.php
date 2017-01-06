@@ -10,6 +10,7 @@ use korchasa\Telegram\Structs\Update;
 use korchasa\Telegram\Structs\Message;
 use korchasa\Telegram\Structs\Chat;
 use korchasa\Telegram\Unstructured;
+use LogicException;
 
 class Bot
 {
@@ -35,12 +36,13 @@ class Bot
     {
         try {
             $state = $this->data->getChat($update->chat()->id);
-            $action = 'action_'.$this->select_action($state, $update);
-            if (!method_exists($this, $action)) {
-                throw new \LogicException('Method '.$action.' not found');
+            $action = $this->select_action($state, $update);
+            $method = 'action_'.$action;
+            if (!method_exists($this, $method)) {
+                throw new \LogicException('Я запутался, и не понимаю что значит '.$action);
             }
             $this->log('Info', 'Selected action: %s', $action);
-            call_user_func([$this, $action], $state, $update);
+            call_user_func([$this, $method], $state, $update);
             $this->data->setChat($update->chat()->id, $state);
         } catch (\Exception $e) {
             $this->message($state, '<i>Что-то пошло не так. '.$e->getMessage().'</i>');
@@ -60,6 +62,8 @@ class Bot
             } else {
                 if (false !== strtotime($update->message->text)) {
                     return 'delay_task';
+                } else {
+                    throw new LogicException('Я не понимаю что значит "'.$update->message->text.'"');
                 }
             }
         } elseif ($update->isText()) {
@@ -171,7 +175,7 @@ class Bot
 
         $state->upcoming_tasks[] = [
             'id' => $task->Id,
-            'until' => $new_time
+            'upcoming_at' => $new_time
         ];
 
         $resp = $megaplan->post('/BumsCommonApiV01/Comment/create.api', [
@@ -225,7 +229,7 @@ class Bot
             if (self::STATUS_ARCHIVE === $task_status) {
                 $text = "<i>{$task->Name}</i>";
             } elseif (self::STATUS_UPCOMING === $task_status) {
-                $text = "{$task->Name} - <i>".date('Y.m.d H:i:s', $task->upcoming_at).'</i>';
+                $text = "{$task->Name}<i>\n".date('Y.m.d H:i:s', time()).'</i>';
             } else {
                 $text = "{$task->Name}";
             }
@@ -298,10 +302,8 @@ class Bot
 
     function task_status($state, $task)
     {
-        foreach ($state->upcoming_tasks as $utask) {
-            if ($task->Name === $utask->id) {
-                return self::STATUS_UPCOMING;
-            }
+        if ('delayed' === $task->Status) {
+            return self::STATUS_UPCOMING;
         }
 
         if (in_array($task->Status, self::$megaplan_statuses_for_inbox)) {
