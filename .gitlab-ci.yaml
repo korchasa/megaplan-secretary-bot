@@ -1,0 +1,16 @@
+image: php:7-cli
+
+cache:
+  paths:
+    - vendor/
+
+before_script:
+  - apt-get update -yqq
+  - apt-get install git -yqq
+  - curl -sS https://getcomposer.org/installer | php
+  - php composer.phar install
+
+build:app:
+  script:
+    - php -d phar.readonly=0 ./vendor/bin/phar-builder.php package ./composer.json
+
