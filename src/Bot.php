@@ -56,7 +56,7 @@ class Bot
 
     function select_action($state, $update): string
     {
-        if ($update->isText() && !$state->host) {
+        if (!$state->host) {
             return 'auth';
         } elseif ($update->isCallbackQuery()) {
             return $update->callback_query->data;
@@ -91,16 +91,13 @@ class Bot
     {
         $parts = explode(" ", $update->message()->text);
         if (3 === count($parts)) {
-            try {
-                $client = (new Megaplan(trim($parts[0])))
-                  ->auth(trim($parts[1]), trim($parts[2]));
-                $state->host = trim($parts[0]);
-                $state->access_id = $client->accessId();
-                $state->secret_key = $client->secretKey();
-
-            } catch (\Exception $e) {
-                $update->replyMessage('Что-то пошло не так. Попробуйте еще раз');
-            }
+            $client = (new Megaplan())
+                ->setHost(trim($parts[0]))
+                ->auth(trim($parts[1]), trim($parts[2]));
+            $state->host = trim($parts[0]);
+            $state->access_id = $client->accessId();
+            $state->secret_key = $client->secretKey();
+            $this->action_inbox($state, $update);
         } else {
             $update->replyMessage("Введите ваш аккаунт, email и пароль к Мегаплану, через пробел. Например: \n<i>ivanoff.megaplan.ru ivan@ivanoff.com qwerty</i>");
         }
@@ -217,9 +214,10 @@ class Bot
         $update->replyMessage($message, $this->menu('help'));
     }
 
-    function action_logout($state, $update)
+    function action_logout($state, Update $update)
     {
-        $state = new State;
+        $update->replyMessage('До свиданья!');
+        $state->host = null;
     }
 
     function _actionTasksList($state, $status)

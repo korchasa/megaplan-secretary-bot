@@ -23,7 +23,6 @@ class Data
 
     function setChat($chat_id, $data)
     {
-        $data->chat_id = $chat_id;
         file_put_contents(
             str_replace('*', $chat_id, self::CHAT_DATA_PATH),
             json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
