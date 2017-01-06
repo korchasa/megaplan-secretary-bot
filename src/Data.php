@@ -4,8 +4,7 @@ namespace App;
 
 class Data
 {
-    const GLOBAL_DATA_PATH = '/tmp/global_data.json';
-    const CHAT_DATA_PATH = '/tmp/chat_data_*.json';
+    const CHAT_DATA_PATH = '/tmp/megaplan_chat_data_*.json';
 
     function getChat($chat_id)
     {
@@ -29,5 +28,12 @@ class Data
             str_replace('*', $chat_id, self::CHAT_DATA_PATH),
             json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
+    }
+
+    function all_chats()
+    {
+        return array_map(function($file) {
+            return json_decode(file_get_contents($file));
+        }, glob(self::CHAT_DATA_PATH));
     }
 }

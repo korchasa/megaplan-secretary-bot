@@ -31,9 +31,11 @@ class Megaplan extends Client
 
     public function findOneTaskByName($task_name, $valid_statuses = null)
     {
+        $short_task_name = explode("\n", $task_name)[0];
+
         $resp = $this->post('/BumsTaskApiV01/Task/list.api', [
             'Folder' => 'responsible',
-            'Search' => $task_name,
+            'Search' => $short_task_name,
             'ShowActions' => true,
         ]);
 
@@ -43,12 +45,14 @@ class Megaplan extends Client
                     return in_array($task->Status, $valid_statuses);
                 })
             );
+        } else {
+            $tasks = $resp->data->tasks;
         }
 
         if (1 === count($tasks)) {
             return $tasks[0];
         } elseif(0 === count($tasks)) {
-            throw new \LogicException('Не получилось найти эту задачу в Мегплане');
+            throw new \LogicException('Не получилось найти эту задачу в Мегаплане');
         } else {
             throw new \LogicException('У этой задачи в Мегаплане завёлся дубликат');
         }

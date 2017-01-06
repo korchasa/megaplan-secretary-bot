@@ -45,8 +45,8 @@ class Bot
             call_user_func([$this, $method], $state, $update);
             $this->data->setChat($update->chat()->id, $state);
         } catch (\Exception $e) {
-            $this->message($state, '<i>Что-то пошло не так. '.$e->getMessage().'</i>');
-            $this->log('Error', get_class($e).':'.$e->getMessage());
+            $this->message($state, '<i>'.$e->getMessage().'</i>');
+            $this->log('Error', get_class($e).': '.$e->getMessage());
         }
     }
 
@@ -57,17 +57,18 @@ class Bot
         } elseif ($update->isCallbackQuery()) {
             return $update->callback_query->data;
         } elseif ($update->isReply()) {
-            if (in_array($update->message()->text, ['готово', 'сделано', 'закрыть', 'закрыто'])) {
+            $text = trim(mb_strtolower($update->message()->text));
+            if (in_array($text, ['готово', 'сделано', 'закрыть', 'закрыто'])) {
                 return 'complete_task';
             } else {
-                if (false !== strtotime($update->message->text)) {
+                if (false !== strtotime($text)) {
                     return 'delay_task';
                 } else {
-                    throw new LogicException('Я не понимаю что значит "'.$update->message->text.'"');
+                    throw new LogicException('Я не понимаю что значит "'.$text.'"');
                 }
             }
         } elseif ($update->isText()) {
-            $text = trim($update->message()->text);
+            $text = trim(mb_strtolower($update->message()->text));
             if ($this->starts_with($text, ['задачи', '/задачи', 'список задач', 'мои задачи'])) {
                 return self::STATUS_INBOX;
             } elseif ($this->starts_with($text, ['/'])) {
@@ -97,7 +98,7 @@ class Bot
                 $update->replyMessage('Что-то пошло не так. Попробуйте еще раз');
             }
         } else {
-            $update->replyMessage('Введите ваш аккаунт, email и пароль к Мегаплану, через пробел. Например, "ivanoff.megaplan.ru ivan@ivanoff.com qwerty"');
+            $update->replyMessage("Введите ваш аккаунт, email и пароль к Мегаплану, через пробел. Например: \n<i>ivanoff.megaplan.ru ivan@ivanoff.com qwerty</i>");
         }
     }
 
@@ -135,23 +136,28 @@ class Bot
 
         $task = $megaplan->findOneTaskByName(
             $update->message->reply_to_message->text,
-            self::$megaplan_statuses_for_inbox
+            array_merge(self::$megaplan_statuses_for_inbox, ['delayed'])
         );
 
-        if ('assigned' == $task->Status) {
-            $resp = $megaplan->post('/BumsTaskApiV01/Task/action.api', [
+        $makeAction = function($action) use ($megaplan, $task) {
+            return $megaplan->post('/BumsTaskApiV01/Task/action.api', [
                 'Id' => $task->Id,
-                'Action' => 'act_accept_task'
+                'Action' => $action
             ]);
+        };
+
+        if ('delayed' === $task->Status) {
+            $makeAction('act_resume');
             $task->Status = 'accepted';
         }
 
-        if ('accepted' == $task->Status) {
-            $resp = $megaplan->post('/BumsTaskApiV01/Task/action.api', [
-                'Id' => $task->Id,
-                'Action' => 'act_done'
-            ]);
+        if ('assigned' === $task->Status) {
+            $makeAction('act_accept_task');
             $task->Status = 'accepted';
+        }
+
+        if ('accepted' === $task->Status) {
+            $makeAction('act_done');
         }
 
         $this->action_inbox($state, $update);
@@ -193,7 +199,7 @@ class Bot
         <i>+ Проверить договор по ООО "Нога и корыто"</i>
             2. Reply with date or time to defer: <i>15 min</i> | <i>next week</i> | <i>2017.01.01 07:00:00</i>
             3. Reply with text to archive: <i>done!</i>',
-            $this->makeButtons('info')
+            $this->menu('info')
         );
     }
 
@@ -237,7 +243,7 @@ class Bot
             if ($i !== (count($filtered_tasks) - 1)) {
                 $this->message($state, $text);
             } else {
-                $this->message($state, $text, $this->makeButtons($status));
+                $this->message($state, $text, $this->menu($status));
             }
         }
     }
@@ -252,28 +258,24 @@ class Bot
 
     function process_upcoming_tasks()
     {
-        global $telegram;
-        foreach(glob(CHAT_DATA_PATH) as $file)
+        foreach($this->data->all_chats() as $state)
         {
-            $state = json_decode(file_get_contents($file));
-            foreach ($state->tasks as $task) {
-                if (self::STATUS_UPCOMING === $task->status && time() > $task->upcoming_at) {
-                    $chat = new Chat;
-                    $chat->id = $state->chat_id;
-                    $message = new Message;
-                    $message->chat = $chat;
-                    $update = new Update;
-                    $update->message = $message;
-                    $update->telegram = $telegram;
-                    $this->show_tasks($state, self::STATUS_INBOX);
+            foreach ($state->upcoming_tasks as $i => $task) {
+                if (time() > $task->upcoming_at) {
+                    $resp = $this->megaplan($state)->post('/BumsTaskApiV01/Task/action.api', [
+                        'Id' => $task->id,
+                        'Action' => 'act_resume'
+                    ]);
 
-                    $task->status = self::STATUS_INBOX;
+                    if ('ok' === $resp->status->code) {
+                        unset($state->upcoming_tasks[$i]);
+                        $state->upcoming_tasks = array_values($state->upcoming_tasks);
+                    }
+
+                    $this->log('Info', 'Returned from delayed: '.$task->id);
                 }
             }
-            file_put_contents(
-                $file,
-                json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-            );
+            $this->data->setChat($state->chat_id, $state);
         }
     }
 
@@ -313,7 +315,7 @@ class Bot
         return self::STATUS_ARCHIVE;
     }
 
-    function makeButtons($except)
+    function menu($except)
     {
         $all_buttons = [
             new InlineButton($this->status_name(self::STATUS_INBOX), self::STATUS_INBOX),
@@ -361,8 +363,7 @@ class Bot
         AbstractPayload $reply_markup = null,
         $reply_to_message_id = null,
         $disable_web_page_preview = false,
-        $parse_mode = 'html',
-        $disable_notifications = true
+        $parse_mode = 'html'
     ) {
         $chat = new Chat;
         $chat->id = $state->chat_id;
@@ -374,7 +375,29 @@ class Bot
             $reply_to_message_id,
             $disable_web_page_preview,
             $parse_mode,
-            $disable_notifications
+            true
+        );
+    }
+
+    function message_and_beep(
+        $state,
+        $text,
+        AbstractPayload $reply_markup = null,
+        $reply_to_message_id = null,
+        $disable_web_page_preview = false,
+        $parse_mode = 'html'
+    ) {
+        $chat = new Chat;
+        $chat->id = $state->chat_id;
+
+        return $this->telegram->sendMessage(
+            $chat,
+            $text,
+            $reply_markup,
+            $reply_to_message_id,
+            $disable_web_page_preview,
+            $parse_mode,
+            false
         );
     }
 }
