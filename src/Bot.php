@@ -26,6 +26,8 @@ class Bot
 
     protected static $new_task_prefixes = ['+', 'Плюс '];
     protected static $megaplan_statuses_for_inbox = ["accepted", "assigned", "actual", "inprocess", "new"];
+    protected static $tasks_list_prefixes = ['задачи', 'список задач', 'мои задачи'];
+    protected static $task_complete_words = ['готово', 'сделано', 'закрыть', 'закрыто'];
 
     public function __construct($megaplan, $telegram)
     {
@@ -60,7 +62,7 @@ class Bot
             return $update->callback_query->data;
         } elseif ($update->isReply()) {
             $text = trim(mb_strtolower($update->message()->text));
-            if (in_array($text, ['готово', 'сделано', 'закрыть', 'закрыто'])) {
+            if ($this->str_contains($text, self::$task_complete_words)) {
                 return 'complete_task';
             } else {
                 if (false !== strtotime($text)) {
@@ -71,7 +73,7 @@ class Bot
             }
         } elseif ($update->isText()) {
             $text = trim(mb_strtolower($update->message()->text));
-            if ($this->starts_with($text, ['задачи', '/задачи', 'список задач', 'мои задачи'])) {
+            if ($this->starts_with($text, self::$tasks_list_prefixes)) {
                 return self::STATUS_INBOX;
             } elseif ($this->starts_with($text, ['/'])) {
                 return mb_substr($text, 1);
@@ -195,14 +197,29 @@ class Bot
 
     function action_help($state, Update $update)
     {
-        $update->replyMessage(
-            '<b>Использование:</b>
-    1. Отправляйте сообщения после знака +, чтобы добавлять новые задачи:
-        <i>+ Проверить договор по ООО "Нога и корыто"</i>
-            2. Reply with date or time to defer: <i>15 min</i> | <i>next week</i> | <i>2017.01.01 07:00:00</i>
-            3. Reply with text to archive: <i>done!</i>',
-            $this->menu('help')
-        );
+        $message = '
+<b>Использование:</b>
+
+<b>Просмотр списка задач</b>
+Отправьте сообщение с любым словом из <b>'.implode('</b>, <b>', self::$tasks_list_prefixes).'</b> или используя команду /inbox.
+
+<b>Создание задачи</b>
+Отправляйте сообщения после знака <b>+</b>
+    <i>+ Проверить договор по ООО "Нога и корыто"</i>
+
+<b>Откладывание задачи</b>
+Ответьте на сообщение с задачей, указав время
+    <i>15 min</i> | <i>next week</i> | <i>2017.01.01 07:00</i>
+
+<b>Завершение задачи</b>
+Ответьте на сообщение с задачей, с любым словом из <b>'.implode('</b>, <b>', self::$task_complete_words).'</b>.
+';
+        $update->replyMessage($message, $this->menu('help'));
+    }
+
+    function action_logout($state, $update)
+    {
+        $state = new State;
     }
 
     function _actionTasksList($state, $status)
@@ -356,6 +373,16 @@ class Bot
     {
         foreach ($needles as $needle) {
             if (starts_with($haystack, mb_strtolower($needle))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function str_contains($haystack, $needles)
+    {
+        foreach ($needles as $needle) {
+            if (str_contains($haystack, mb_strtolower($needle))) {
                 return true;
             }
         }
