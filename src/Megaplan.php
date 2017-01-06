@@ -29,6 +29,16 @@ class Megaplan extends Client
         return $this;
     }
 
+    public static function new($state)
+    {
+        $megaplan = new self;
+        $megaplan
+            ->setHost($state->host)
+            ->setAccessId($state->access_id)
+            ->setSecretKey($state->secret_key);
+        return $megaplan;
+    }
+
     public function findOneTaskByName($task_name, $valid_statuses = null)
     {
         $short_task_name = explode("\n", $task_name)[0];

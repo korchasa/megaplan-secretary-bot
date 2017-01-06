@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
 use korchasa\Telegram\Telegram;
@@ -39,18 +41,18 @@ class Bot
             $action = $this->select_action($state, $update);
             $method = 'action_'.$action;
             if (!method_exists($this, $method)) {
-                throw new \LogicException('Я запутался, и не понимаю что значит '.$action);
+                throw new \LogicException('Я запутался, и не понимаю что значит "'.$action.'"');
             }
             $this->log('Info', 'Selected action: %s', $action);
             call_user_func([$this, $method], $state, $update);
             $this->data->setChat($update->chat()->id, $state);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->message($state, '<i>'.$e->getMessage().'</i>');
             $this->log('Error', get_class($e).': '.$e->getMessage());
         }
     }
 
-    function select_action($state, $update)
+    function select_action($state, $update): string
     {
         if ($update->isText() && !$state->host) {
             return 'auth';
@@ -72,11 +74,11 @@ class Bot
             if ($this->starts_with($text, ['задачи', '/задачи', 'список задач', 'мои задачи'])) {
                 return self::STATUS_INBOX;
             } elseif ($this->starts_with($text, ['/'])) {
-                return 'info';
+                return mb_substr($text, 1);
             } elseif ($this->starts_with($text, self::$new_task_prefixes)) {
                 return 'new_task';
             } else {
-                return 'info';
+                return 'help';
             }
         } else {
 
@@ -120,8 +122,8 @@ class Bot
     function action_new_task($state, $update)
     {
         $text = $this->ltrim($update->message()->text, self::$new_task_prefixes);
-        $resp1 = $this->megaplan($state)->post('/BumsCommonApiV01/UserInfo/id.api');
-        $resp2 = $this->megaplan($state)->post('/BumsTaskApiV01/Task/create.api', [
+        $resp1 = Megaplan::new($state)->post('/BumsCommonApiV01/UserInfo/id.api');
+        $resp2 = Megaplan::new($state)->post('/BumsTaskApiV01/Task/create.api', [
             'Model' => [
                 'Name' => $text,
                 'Responsible' => $resp1->data->EmployeeId
@@ -132,7 +134,7 @@ class Bot
 
     function action_complete_task($state, $update)
     {
-        $megaplan = $this->megaplan($state);
+        $megaplan = Megaplan::new($state);
 
         $task = $megaplan->findOneTaskByName(
             $update->message->reply_to_message->text,
@@ -165,7 +167,7 @@ class Bot
 
     function action_delay_task($state, $update)
     {
-        $megaplan = $this->megaplan($state);
+        $megaplan = Megaplan::new($state);
 
         $task = $megaplan->findOneTaskByName(
             $update->message->reply_to_message->text,
@@ -191,7 +193,7 @@ class Bot
         ]);
     }
 
-    function action_info($state, Update $update)
+    function action_help($state, Update $update)
     {
         $update->replyMessage(
             '<b>Использование:</b>
@@ -199,13 +201,13 @@ class Bot
         <i>+ Проверить договор по ООО "Нога и корыто"</i>
             2. Reply with date or time to defer: <i>15 min</i> | <i>next week</i> | <i>2017.01.01 07:00:00</i>
             3. Reply with text to archive: <i>done!</i>',
-            $this->menu('info')
+            $this->menu('help')
         );
     }
 
     function _actionTasksList($state, $status)
     {
-        $resp = $this->megaplan($state)->post(
+        $resp = Megaplan::new($state)->post(
             '/BumsTaskApiV01/Task/list.api', [
                 'Folder' => 'responsible'
             ]
@@ -258,21 +260,14 @@ class Bot
         }
     }
 
-    function megaplan($state)
-    {
-        return $this->megaplan
-            ->setHost($state->host)
-            ->setAccessId($state->access_id)
-            ->setSecretKey($state->secret_key);
-    }
-
     function process_upcoming_tasks()
     {
-        foreach($this->data->all_chats() as $state)
+        $data = new Data;
+        foreach($data->all_chats() as $state)
         {
             foreach ($state->upcoming_tasks as $i => $task) {
                 if (time() > $task->upcoming_at) {
-                    $resp = $this->megaplan($state)->post('/BumsTaskApiV01/Task/action.api', [
+                    $resp = Megaplan::new($state)->post('/BumsTaskApiV01/Task/action.api', [
                         'Id' => $task->id,
                         'Action' => 'act_resume'
                     ]);
@@ -331,7 +326,7 @@ class Bot
             new InlineButton($this->status_name(self::STATUS_INBOX), self::STATUS_INBOX),
             new InlineButton($this->status_name(self::STATUS_UPCOMING), self::STATUS_UPCOMING),
             new InlineButton($this->status_name(self::STATUS_ARCHIVE), self::STATUS_ARCHIVE),
-            new InlineButton('?', 'info')
+            new InlineButton('?', 'help')
         ];
         return new InlineKeyboard([
             array_values(array_filter($all_buttons, function($button) use ($except) {
