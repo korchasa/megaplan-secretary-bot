@@ -29,6 +29,11 @@ class Megaplan extends Client
         return $this;
     }
 
+    public function getHost()
+    {
+        return $this->host;
+    }
+
     public static function new($state)
     {
         $megaplan = new self;

@@ -56,7 +56,9 @@ class Bot
 
     function select_action($state, $update): string
     {
-        if (!$state->host) {
+        if ($update->isText() && '/demo' === $update->message()->text) {
+            return 'demo';
+        } elseif (!$state->host) {
             return 'auth';
         } elseif ($update->isCallbackQuery()) {
             return $update->callback_query->data;
@@ -188,8 +190,10 @@ class Bot
         $resp = $megaplan->post('/BumsCommonApiV01/Comment/create.api', [
             'SubjectType' => 'task',
             'SubjectId' => $task->Id,
-            'Model' => ['Text' => 'Отложена до '.date('c', $new_time)]
+            'Model' => ['Text' => 'Отложена до '.date('Y.m.d H:i', $new_time)]
         ]);
+
+        $this->action_inbox($state, $update);
     }
 
     function action_help($state, Update $update)
@@ -218,6 +222,46 @@ class Bot
     {
         $update->replyMessage('До свиданья!');
         $state->host = null;
+    }
+
+    function action_demo($state, Update $update)
+    {
+        $this->action_logout($state, $update);
+
+        $megaplan = (new Megaplan())
+            ->setHost('korchasa.megaplan.ru')
+            ->setAccessId('Ef247061a56dcc19c14d')
+            ->setSecretKey('3773e0af2bDd2269eF157660109Ba19f1432957b');
+
+        $last_names = [
+            'Благочестивый', 'Набожный', 'Лысый', 'Красивый',
+            'Железный', 'Безумный', 'Заячья лапа', 'Железнобокий',
+            'Длиноногий', 'Грамотей', 'Исповедник', 'Мученик', 'Синезубый',
+            'Пешеход', 'Кровавая Секира', 'Орлиный Котёл', 'Детолюб', 'Голоногий',
+            'Дутая Голова', 'Широкобородый', 'Связанные Ноги'
+        ];
+
+        $first_names = [
+            'Блейд', 'Гамбит', 'Халк', 'Тор', 'Росомаха', 'Бетмен', 'Флэш', 'Роршах', 'Дэдпул',
+            'Супермен', 'Айронмэн', 'Кейдж', 'Дракс', 'Добрыня', 'Алеша', 'Илья'
+        ];
+
+        $resp = $megaplan->post('/BumsStaffApiV01/Employee/create.api', [
+            'Model' => [
+                'Login' => $login = 'demo-'.str_random(3),
+                'FirstName' => $last_names[array_rand($last_names)],
+                'LastName' => $first_names[array_rand($first_names)],
+                'Password' => $password = 'password',
+                'Position' => 'Менеджер'
+            ]
+        ]);
+
+        $update->replyMessage('
+            При запросе логинов-паролей, введите:'.PHP_EOL.
+            '<i>'.$megaplan->getHost().' '.$login.' '.$password.'</i>'
+        );
+
+        $this->action_auth($state, $update);
     }
 
     function _actionTasksList($state, $status)
