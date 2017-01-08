@@ -1,9 +1,9 @@
 
 
-$font-primary: 'Source Sans Pro', Arial, sans-serif;
+$font-primary: 'Open Sans', Arial, sans-serif;
 
 // Overrides
-$grid-gutter-width: 40px !default; 
+$grid-gutter-width: 40px !default;
 $border-radius-base:  4px !default;
 $padding-base-vertical: 14px !default;
 
@@ -70,7 +70,7 @@ $form-group-margin-bottom:       30px !default;
 }
 
 @mixin icomoon() {
-	
+
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -82,10 +82,10 @@ $form-group-margin-bottom:       30px !default;
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	
+
 }
 
-// Import 
+// Import
 @import 'bootstrap/mixins';
 @import 'bootstrap/variables';
 
@@ -94,7 +94,7 @@ $form-group-margin-bottom:       30px !default;
 
 /* =======================================================
 *
-* 	Template Style 
+* 	Template Style
 *	Edit this section
 *
 * ======================================================= */
@@ -110,7 +110,7 @@ body {
 	background: $brand-bg-color;
 	height: 100%;
 	position: relative;
-	
+
 }
 a {
 	color: $brand-primary;
@@ -272,7 +272,7 @@ h1, h2, h3, h4, h5, h6 {
 		font-weight: 700;
 		padding-left: 0;
 		color: $brand-white;
-		
+
 	}
 	&.navbar-fixed-top {
 		position: fixed!important;
@@ -316,7 +316,7 @@ h1, h2, h3, h4, h5, h6 {
 		border: transparent;
 		background: transparent;
 		@include border-radius(0px);
-		
+
 		// padding-right: 30px;
 		// padding-left: 10px;
 
@@ -325,7 +325,7 @@ h1, h2, h3, h4, h5, h6 {
 			padding-right: 0px;
 			padding-left: 0px;
 		}
-		
+
 
 		.brand-slogan {
 			margin: 28px 0 0 15px;
@@ -337,7 +337,7 @@ h1, h2, h3, h4, h5, h6 {
 				font-style: normal;
 			}
 		}
-		
+
 	}
 	a {
 		@include transition(.0s);
@@ -432,7 +432,7 @@ h1, h2, h3, h4, h5, h6 {
 			border-left: none;
 			padding: 40px;
 			background: $brand-white;
-			
+
 			position: relative;
 			@include border-radius(4px);
 			&:after {
@@ -441,9 +441,9 @@ h1, h2, h3, h4, h5, h6 {
 			   top: 100%;
 			   left: 40px;
 			   border-top: 15px solid black;
-			   border-top-color: $brand-white; 
+			   border-top-color: $brand-white;
 			   border-left: 15px solid transparent;
-			   border-right: 15px solid transparent; 
+			   border-right: 15px solid transparent;
 			}
 			.quote {
 				position: absolute;
@@ -508,9 +508,9 @@ h1, h2, h3, h4, h5, h6 {
 				   left: 50%;
 				   margin-left: -10px;
 				   border-top: 10px solid black;
-				   border-top-color: $brand-primary; 
+				   border-top-color: $brand-primary;
 				   border-left: 10px solid transparent;
-				   border-right: 10px solid transparent; 
+				   border-right: 10px solid transparent;
 				}
 	    	}
 	    }
@@ -551,7 +551,7 @@ h1, h2, h3, h4, h5, h6 {
 	background: #f4f4f4;
 }
 #fh5co-our-services {
-	
+
 	.box {
 		// min-height: 360px;
 		padding: 30px;
@@ -678,7 +678,7 @@ h1, h2, h3, h4, h5, h6 {
 			float: left;
 			padding: 20px;
 			.fh5co-press-title {
-		
+
 				margin: 0 0 20px 0;
 				padding: 0 0 10px 0;
 				font-weight: 400;
@@ -977,7 +977,7 @@ h1, h2, h3, h4, h5, h6 {
 		left: 10px;
 		i:before {
 			color: rgba(255,255,255,1);
-		
+
 		}
 	}
 }
@@ -988,7 +988,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 	&:hover {
 		i {
-			color: $brand-black;		
+			color: $brand-black;
 		}
 	}
 }
@@ -1027,7 +1027,7 @@ h1, h2, h3, h4, h5, h6 {
 	text-align: center;
 }
 .owl-carousel-fullwidth.owl-theme .owl-dots {
-	bottom: 0;	
+	bottom: 0;
 	margin-bottom: 2.5em;
 }
 .owl-theme .owl-dots .owl-dot span {
@@ -1048,7 +1048,7 @@ h1, h2, h3, h4, h5, h6 {
 	border: 2px solid #fff;
 }
 .owl-carousel-fullwidth {
-	
+
 
 	.item, .fh5co-owl-text-wrap {
 		height: 800px;
@@ -1064,7 +1064,7 @@ h1, h2, h3, h4, h5, h6 {
 		// bottom: -5em;
 	}
 	.item {
-		
+
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: top left;
@@ -1081,7 +1081,7 @@ h1, h2, h3, h4, h5, h6 {
 		img {
 			max-width: 100%;
 		}
-		
+
 		.iphone-image {
 			position: relative;
 			z-index: 99;
@@ -1102,8 +1102,8 @@ h1, h2, h3, h4, h5, h6 {
 				}
 			}
 		}
-	
-		
+
+
 
 		.fh5co-owl-text {
 			display: table-cell;
@@ -1144,7 +1144,7 @@ h1, h2, h3, h4, h5, h6 {
 					line-height: 30px;
 				}
 			}
-			
+
 			.fh5co-sub-lead {
 				font-size: 30px;
 				line-height: 30px;
@@ -1185,13 +1185,13 @@ h1, h2, h3, h4, h5, h6 {
 	padding-bottom: 4em;
 	@media screen and (max-width: $screen-sm ) {
 		padding-bottom: 2em;
-	}	
+	}
 }
 .row-bottom-padded-sm {
 	padding-bottom: 2em;
 	@media screen and (max-width: $screen-sm ) {
 		padding-bottom: 2em;
-	}	
+	}
 }
 
 // Menu Animate

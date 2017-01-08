@@ -7,12 +7,12 @@
 }
 /* =======================================================
 *
-* 	Template Style 
+* 	Template Style
 *	Edit this section
 *
 * ======================================================= */
 body {
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: "Open Sans", Arial, sans-serif;
   font-weight: 400;
   font-size: 16px;
   line-height: 1.8;
@@ -40,7 +40,7 @@ p {
 
 h1, h2, h3, h4, h5, h6 {
   color: #000;
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: "Open Sans", Arial, sans-serif;
   font-weight: 400;
 }
 
@@ -107,7 +107,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0;
 }
 #fh5co-header #navbar li a {
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: "Open Sans", Arial, sans-serif;
   color: rgba(255, 255, 255, 0.5);
   position: relative;
 }

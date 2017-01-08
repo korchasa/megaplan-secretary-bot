@@ -1,11 +1,11 @@
-$font-primary: 'Source Sans Pro', Arial, sans-serif;
+$font-primary: 'Open Sans', Arial, sans-serif;
 
 // Overrides
-$grid-gutter-width: 40px !default; 
+$grid-gutter-width: 40px !default;
 $border-radius-base:  4px !default;
 $padding-base-vertical: 14px !default;
 
-$brand-primary: #329998 !default; 
+$brand-primary: #329998 !default;
 $brand-secondary: #6cc99c !default;
 
 
@@ -52,16 +52,16 @@ $form-group-margin-bottom:       30px !default;
           border-radius: $radius;
 }
 @mixin flex() {
-	display: -webkit-box;      
-  	display: -moz-box;         
-  	display: -ms-flexbox;      
-  	display: -webkit-flex;     
-  	display: flex;             
+	display: -webkit-box;
+  	display: -moz-box;
+  	display: -ms-flexbox;
+  	display: -webkit-flex;
+  	display: flex;
 }
 @mixin flexwrap() {
 	flex-wrap: wrap;
-	-webkit-flex-wrap: wrap; 
-	-moz-flex-wrap: wrap; 
+	-webkit-flex-wrap: wrap;
+	-moz-flex-wrap: wrap;
 }
 @mixin angle($pseudo, $flip: false, $angle: 1.5deg) {
   // Possible values for $pseudo are: before, after, both
@@ -166,7 +166,7 @@ $form-group-margin-bottom:       30px !default;
 }
 
 @mixin icomoon() {
-	
+
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -178,10 +178,10 @@ $form-group-margin-bottom:       30px !default;
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	
+
 }
 
-// Import 
+// Import
 @import 'bootstrap/mixins';
 @import 'bootstrap/variables';
 
@@ -190,7 +190,7 @@ $form-group-margin-bottom:       30px !default;
 
 /* =======================================================
 *
-* 	Template Style 
+* 	Template Style
 *	Edit this section
 *
 * ======================================================= */
@@ -206,7 +206,7 @@ body {
 	background: $brand-bg-color;
 	height: 100%;
 	position: relative;
-	
+
 }
 a {
 	color: $brand-primary;
@@ -399,7 +399,7 @@ h1, h2, h3, h4, h5, h6 {
 		font-weight: 700;
 		padding-left: 0;
 		color: $brand-white;
-		
+
 	}
 	&.navbar-fixed-top {
 		position: fixed!important;
@@ -473,7 +473,7 @@ h1, h2, h3, h4, h5, h6 {
 	background-attachment: fixed;
 	position: relative;
 	width: 100%;
-	
+
 	background-color: $brand-primary;
 	color: #fff;
 	overflow: hidden;
@@ -486,7 +486,7 @@ h1, h2, h3, h4, h5, h6 {
 		z-index: 2;
 		opacity: .9;
 		-webkit-backface-visibility: hidden; // for Chrome Windows
-		
+
 		@include fh5co-gradient;
 	}
 	&, .text-wrap {
@@ -581,16 +581,16 @@ h1, h2, h3, h4, h5, h6 {
 		background-size: cover;
 		position: relative;
 		backgroun-repeat: no-repeat;
-	
+
 		@media screen and (max-width: $screen-sm) {
-			width: 100%;	
+			width: 100%;
 		}
 		> .overlay-darker {
 			z-index: 8;
 			opacity: .5;
-			background: #474747;	
-			
-			
+			background: #474747;
+
+
 
 			position: absolute;
 			left: 0;
@@ -623,7 +623,7 @@ h1, h2, h3, h4, h5, h6 {
 			font-size: 24px;
 			font-weight: 400;
 		}
-		
+
 		&:hover, &:focus {
 			> .overlay {
 				opacity: 0;
@@ -634,7 +634,7 @@ h1, h2, h3, h4, h5, h6 {
 				.fh5co-intro-icon {
 					color: $brand-white;
 				}
-				
+
 			}
 			h2 {
 				color: $brand-white;
@@ -648,7 +648,7 @@ h1, h2, h3, h4, h5, h6 {
 				}
 			}
 		}
-		
+
 	}
 }
 
@@ -713,7 +713,7 @@ h1, h2, h3, h4, h5, h6 {
 	padding: 7em 0;
 	@media screen and (max-width: $screen-sm) {
 		padding: 4em 0;
-	}	
+	}
 }
 #fh5co-services {
 
@@ -784,7 +784,7 @@ h1, h2, h3, h4, h5, h6 {
 	padding: 9em 0 10em 0;
 	@media screen and (max-width: $screen-sm) {
 		padding: 4em 0;
-	}	
+	}
 	.fh5co-overlay {
 		position: absolute;
 		top: 0;
@@ -823,11 +823,11 @@ h1, h2, h3, h4, h5, h6 {
 		margin-bottom: 0;
 		h2 {
 			color: $brand-white;
-			
+
 			&:after {
 				background: rgba(255,255,255,.3)!important;
 			}
-			
+
 		}
 		.subtext {
 			h3 {
@@ -844,8 +844,8 @@ h1, h2, h3, h4, h5, h6 {
 			float: left;
 			width: 100%;
 		}
-		.fh5co-counter-icon, 
-		.fh5co-counter-number, 
+		.fh5co-counter-icon,
+		.fh5co-counter-number,
 		.fh5co-counter-label {
 			display: block;
 		}
@@ -885,7 +885,7 @@ h1, h2, h3, h4, h5, h6 {
 			background: $brand-primary;
 			font-size: 20px;
 			font-weight: 300;
-			
+
 			position: relative;
 			@include border-radius(7px);
 			&:after {
@@ -894,12 +894,12 @@ h1, h2, h3, h4, h5, h6 {
 			   top: 100%;
 			   left: 40px;
 			   border-top: 10px solid black;
-			   border-top-color: $brand-white; 
+			   border-top-color: $brand-white;
 			   border-top-color: $brand-primary;
 			   border-left: 10px solid transparent;
-			   border-right: 10px solid transparent; 
+			   border-right: 10px solid transparent;
 			}
-			
+
 			p {
 				font-style: italic;
 				color: $brand-white;
@@ -979,11 +979,11 @@ h1, h2, h3, h4, h5, h6 {
 	.section-heading {
 		h2 {
 			color: $brand-white;
-			
+
 				&:after {
 					background: rgba(255,255,255,.3);
 				}
-			
+
 		}
 		h3 {
 			color: rgba(255,255,255,.8);
@@ -997,11 +997,11 @@ h1, h2, h3, h4, h5, h6 {
 		background: $brand-white;
 		overflow: hidden;
 		z-index: 9;
-		
+
 		margin-bottom: 30px;
 		@include border-radius(7px);
 		@include transition(.3s);
-		
+
 		img {
 			z-index: 8;
 			opacity: 1;
@@ -1273,7 +1273,7 @@ h1, h2, h3, h4, h5, h6 {
 	position: relative;
 	// color: #d6d6d6;btn
 	.gotop {
-		position: absolute; 
+		position: absolute;
 		top: -20px;
 		left: 50%;
 		margin-left: -40px;
@@ -1444,13 +1444,13 @@ h1, h2, h3, h4, h5, h6 {
 	padding-bottom: 4em;
 	@media screen and (max-width: $screen-sm ) {
 		padding-bottom: 2em;
-	}	
+	}
 }
 .row-bottom-padded-sm {
 	padding-bottom: 2em;
 	@media screen and (max-width: $screen-sm ) {
 		padding-bottom: 2em;
-	}	
+	}
 }
 
 // Menu bar Animate
