@@ -17,6 +17,6 @@ build:app:
 pages:
   artifacts:
     paths:
-    - site
+    - public
   only:
   - master
