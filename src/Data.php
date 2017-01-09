@@ -4,7 +4,7 @@ namespace App;
 
 class Data
 {
-    const CHAT_DATA_PATH = '/tmp/megaplan_chat_data_*.json';
+    const CHAT_DATA_PATH = __DIR__.'/../var/megaplan_chat_data_*.json';
 
     function getChat($chat_id)
     {

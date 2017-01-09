@@ -9,9 +9,7 @@ use korchasa\Telegram\Structs\Payload\AbstractPayload;
 use korchasa\Telegram\Structs\Payload\InlineKeyboard;
 use korchasa\Telegram\Structs\Payload\InlineButton;
 use korchasa\Telegram\Structs\Update;
-use korchasa\Telegram\Structs\Message;
 use korchasa\Telegram\Structs\Chat;
-use korchasa\Telegram\Unstructured;
 use LogicException;
 
 class Bot
@@ -20,14 +18,18 @@ class Bot
     const STATUS_UPCOMING = "upcoming";
     const STATUS_ARCHIVE = "archive";
 
+    /** @var Data */
     protected $data;
+    /** @var Megaplan */
     protected $megaplan;
+    /** @var Telegram */
     protected $telegram;
 
     protected static $new_task_prefixes = ['+', 'Плюс '];
     protected static $megaplan_statuses_for_inbox = ["accepted", "assigned", "actual", "inprocess", "new"];
     protected static $tasks_list_prefixes = ['задачи', 'список задач', 'мои задачи'];
     protected static $task_complete_words = ['готово', 'сделано', 'закрыть', 'закрыто'];
+    protected static $comment_signature = "\n\n//Отправленно из Зама для Мегаплана//";
 
     public function __construct($megaplan, $telegram)
     {
@@ -36,10 +38,11 @@ class Bot
         $this->telegram = $telegram;
     }
 
-    public function process_update($update)
+    public function process_update(Update $update)
     {
+        $state = $this->data->getChat($update->chat()->id);
         try {
-            $state = $this->data->getChat($update->chat()->id);
+
             $action = $this->select_action($state, $update);
             $method = 'action_'.$action;
             if (!method_exists($this, $method)) {
@@ -54,7 +57,7 @@ class Bot
         }
     }
 
-    function select_action($state, $update): string
+    function select_action($state, Update $update): string
     {
         if ($update->isText() && '/demo' === $update->message()->text) {
             return 'demo';
@@ -85,11 +88,11 @@ class Bot
                 return 'help';
             }
         } else {
-
+            return 'unknown';
         }
     }
 
-    public function action_auth($state, $update)
+    public function action_auth($state, Update $update)
     {
         $parts = explode(" ", $update->message()->text);
         if (3 === count($parts)) {
@@ -99,7 +102,7 @@ class Bot
             $state->host = trim($parts[0]);
             $state->access_id = $client->accessId();
             $state->secret_key = $client->secretKey();
-            $this->action_inbox($state, $update);
+            $this->action_inbox($state);
         } else {
             $update->replyMessage(<<<EOD
 Если вы хотите потренироваться на демо-аккаунте, отправьте /demo.
@@ -132,7 +135,7 @@ EOD
             'Супермен', 'Айронмэн', 'Кейдж', 'Дракс', 'Добрыня', 'Алеша', 'Илья'
         ];
 
-        $resp = $megaplan->post('/BumsStaffApiV01/Employee/create.api', [
+        $megaplan->post('/BumsStaffApiV01/Employee/create.api', [
             'Model' => [
                 'Login' => $login = 'demo-'.str_random(3),
                 'FirstName' => $first = $first_names[array_rand($first_names)],
@@ -151,44 +154,44 @@ EOD
         $state->access_id = $client->accessId();
         $state->secret_key = $client->secretKey();
 
-        $this->action_inbox($state, $update);
+        $this->action_inbox($state);
     }
 
-    function action_inbox($state, $update)
+    function action_inbox($state)
     {
-        return $this->_actionTasksList($state, self::STATUS_INBOX);
+        $this->_actionTasksList($state, self::STATUS_INBOX);
     }
 
-    function action_upcoming($state, $update)
+    function action_upcoming($state)
     {
-        return $this->_actionTasksList($state, self::STATUS_UPCOMING);
+        $this->_actionTasksList($state, self::STATUS_UPCOMING);
     }
 
-    function action_archive($state, $update)
+    function action_archive($state)
     {
-        return $this->_actionTasksList($state, self::STATUS_ARCHIVE);
+        $this->_actionTasksList($state, self::STATUS_ARCHIVE);
     }
 
-    function action_new_task($state, $update)
+    function action_new_task($state, Update $update)
     {
         $text = $this->ltrim($update->message()->text, self::$new_task_prefixes);
         $resp1 = Megaplan::new($state)->post('/BumsCommonApiV01/UserInfo/id.api');
-        $resp2 = Megaplan::new($state)->post('/BumsTaskApiV01/Task/create.api', [
+        Megaplan::new($state)->post('/BumsTaskApiV01/Task/create.api', [
             'Model' => [
                 'Name' => $text,
                 'Responsible' => $resp1->data->EmployeeId
             ]
         ]);
-        $this->action_inbox($state, $update);
+        $this->action_inbox($state);
     }
 
-    function action_complete_task($state, $update)
+    function action_complete_task($state, Update $update)
     {
         $megaplan = Megaplan::new($state);
 
         $task = $megaplan->findOneTaskByName(
             $update->message->reply_to_message->text,
-            array_merge(self::$megaplan_statuses_for_inbox, ['delayed'])
+            array_merge(self::$megaplan_statuses_for_inbox, ['delayed', 'done', 'completed'])
         );
 
         $makeAction = function($action) use ($megaplan, $task) {
@@ -212,10 +215,20 @@ EOD
             $makeAction('act_done');
         }
 
-        $this->action_inbox($state, $update);
+        $text = $update->message()->text;
+        foreach (self::$task_complete_words as $word) {
+            $text = str_replace($word, "**$word**", $text);
+        }
+        $megaplan->post('/BumsCommonApiV01/Comment/create.api', [
+            'SubjectType' => 'task',
+            'SubjectId' => $task->Id,
+            'Model' => ['Text' => $text.self::$comment_signature]
+        ]);
+
+        $this->action_inbox($state);
     }
 
-    function action_delay_task($state, $update)
+    function action_delay_task($state, Update $update)
     {
         $megaplan = Megaplan::new($state);
 
@@ -224,7 +237,7 @@ EOD
             array_merge(self::$megaplan_statuses_for_inbox, ['delayed'])
         );
 
-        $resp = $megaplan->post('/BumsTaskApiV01/Task/action.api', [
+        $megaplan->post('/BumsTaskApiV01/Task/action.api', [
             'Id' => $task->Id,
             'Action' => 'act_pause'
         ]);
@@ -236,13 +249,13 @@ EOD
             'upcoming_at' => $new_time
         ];
 
-        $resp = $megaplan->post('/BumsCommonApiV01/Comment/create.api', [
+        $megaplan->post('/BumsCommonApiV01/Comment/create.api', [
             'SubjectType' => 'task',
             'SubjectId' => $task->Id,
-            'Model' => ['Text' => 'Отложена до '.date('Y.m.d H:i', $new_time)]
+            'Model' => ['Text' => 'Отложена до '.date('Y.m.d H:i', $new_time).self::$comment_signature]
         ]);
 
-        $this->action_inbox($state, $update);
+        $this->action_inbox($state);
     }
 
     function action_help($state, Update $update)
@@ -280,10 +293,9 @@ EOD
                 'Folder' => 'responsible'
             ]
         );
-        $tasks = $resp->data->tasks;
 
         $filtered_tasks = array_values(array_filter($resp->data->tasks, function($task) use ($state, $status) {
-            $task_status = $this->task_status($state, $task);
+            $task_status = $this->task_status($task);
             return $status === $task_status;
         }));
 
@@ -300,7 +312,7 @@ EOD
         }
 
         foreach ($filtered_tasks as $i => $task) {
-            $task_status = $this->task_status($state, $task);
+            $task_status = $this->task_status($task);
 
             if (self::STATUS_ARCHIVE === $task_status) {
                 $text = "<i>{$task->Name}</i>";
@@ -375,7 +387,7 @@ EOD
         ][$status];
     }
 
-    function task_status($state, $task)
+    function task_status($task)
     {
         if ('delayed' === $task->Status) {
             return self::STATUS_UPCOMING;
