@@ -10,7 +10,6 @@ use korchasa\Telegram\Structs\Payload\InlineKeyboard;
 use korchasa\Telegram\Structs\Payload\InlineButton;
 use korchasa\Telegram\Structs\Update;
 use korchasa\Telegram\Structs\Chat;
-use LogicException;
 
 class Bot
 {
@@ -73,7 +72,7 @@ class Bot
                 if (false !== strtotime($text)) {
                     return 'delay_task';
                 } else {
-                    throw new LogicException('Я не понимаю что значит "'.$text.'"');
+                    return 'help_with_unknown';
                 }
             }
         } elseif ($update->isText()) {
@@ -85,7 +84,7 @@ class Bot
             } elseif ($this->starts_with($text, self::$new_task_prefixes)) {
                 return 'new_task';
             } else {
-                return 'help';
+                return 'help_with_unknown';
             }
         } else {
             return 'unknown';
@@ -261,23 +260,29 @@ EOD
     function action_help($state, Update $update)
     {
         $message = '
-<b>Использование:</b>
+С моей помощью вы можете:
 
-<b>Просмотр списка задач</b>
-Отправьте сообщение с любым словом из <b>'.implode('</b>, <b>', self::$tasks_list_prefixes).'</b> или используя команду /inbox.
+<b>Просматривать списки задач</b>
+Отправьте сообщение с любым словом из <i>'.implode('</i>, <i>', self::$tasks_list_prefixes).'</i> или используя команду /inbox.
 
-<b>Создание задачи</b>
+<b>Создавать задачи</b>
 Отправляйте сообщения после знака <b>+</b>
     <i>+ Проверить договор по ООО "Нога и корыто"</i>
 
-<b>Откладывание задачи</b>
+<b>Откладывать задачи</b>
 Ответьте на сообщение с задачей, указав время
     <i>15 min</i> | <i>next week</i> | <i>2017.01.01 07:00</i>
 
-<b>Завершение задачи</b>
-Ответьте на сообщение с задачей, с любым словом из <b>'.implode('</b>, <b>', self::$task_complete_words).'</b>.
+<b>Завершать задачи</b>
+Ответьте на сообщение с задачей, с любым словом из <i>'.implode('</i>, <i>', self::$task_complete_words).'</i>.
 ';
         $update->replyMessage($message, $this->menu('help'));
+    }
+
+    function action_help_with_unknown($state, Update $update)
+    {
+        $update->replyMessage('Я не понимаю, что вы имеете ввиду.');
+        $this->action_help($state, $update);
     }
 
     function action_logout($state, Update $update)
