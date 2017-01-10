@@ -1,19 +1,19 @@
 image: php:7-cli
 
-# cache:
-#   pat hs:
-#     - vendor/
+ cache:
+   pat hs:
+     - vendor/
 
-# before_script:
-#   - apt-get update -yqq
-#   - apt-get install git -yqq
-#   - docker-php-ext-install bcmath
-#   - curl -sS https://getcomposer.org/installer | php
-#   - php composer.phar install
+ before_script:
+   - apt-get update -yqq
+   - apt-get install git -yqq
+   - docker-php-ext-install bcmath
+   - curl -sS https://getcomposer.org/installer | php
+   - php composer.phar install
 
-# build:app:
-#   script:
-#     - php -d phar.readonly=0 ./vendor/bin/phar-builder.php package ./composer.json
+ build:app:
+   script:
+     - php -d phar.readonly=0 ./vendor/bin/phar-builder.php package ./composer.json
 
 pages:
   script:

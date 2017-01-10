@@ -6,12 +6,6 @@
             "email": "korchasa@gmail.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/www/telegram-php"
-        }
-    ],
     "require": {
         "rappasoft/laravel-helpers": "dev-master",
         "larapack/dd": "^1.1",
