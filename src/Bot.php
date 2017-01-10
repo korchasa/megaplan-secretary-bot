@@ -27,7 +27,8 @@ class Bot
     protected static $new_task_prefixes = ['+', 'Плюс '];
     protected static $megaplan_statuses_for_inbox = ["accepted", "assigned", "actual", "inprocess", "new"];
     protected static $tasks_list_prefixes = ['задачи', 'список задач', 'мои задачи'];
-    protected static $task_complete_words = ['готово', 'сделано', 'закрыть', 'закрыто'];
+    protected static $task_complete_words = ['готово', 'сделано', 'закрыть', 'закрыто', '!'];
+    protected static $task_details_words = ['подробнее', 'детали', 'описание', '?'];
     protected static $comment_signature = "\n\n//Отправленно из Зама для Мегаплана//";
 
     public function __construct($megaplan, $telegram)
@@ -42,13 +43,13 @@ class Bot
         $state = $this->data->getChat($update->chat()->id);
         try {
 
-            $action = $this->select_action($update, $state);
+            $action = $this->select_action($state, $update);
             $method = 'action_'.$action;
             if (!method_exists($this, $method)) {
                 throw new \LogicException('Я запутался, и не понимаю что значит "'.$action.'"');
             }
             $this->log('Info', 'Selected action: %s', $action);
-            call_user_func([$this, $method], $update, $state);
+            call_user_func([$this, $method], $state, $update);
             $this->data->setChat($update->chat()->id, $state);
         } catch (\Throwable $e) {
             $this->message($state, '<i>'.$e->getMessage().'</i>');
@@ -56,7 +57,7 @@ class Bot
         }
     }
 
-    function select_action(Update $update, $state): string
+    function select_action($state, Update $update): string
     {
         if ($update->isText() && '/demo' === $update->message()->text) {
             return 'demo';
@@ -68,6 +69,8 @@ class Bot
             $text = trim(mb_strtolower($update->message()->text));
             if ($this->str_contains($text, self::$task_complete_words)) {
                 return 'complete_task';
+            } elseif ($this->str_contains($text, self::$task_details_words)) {
+                    return 'task_details';
             } else {
                 if (false !== strtotime($text)) {
                     return 'delay_task';
@@ -91,7 +94,7 @@ class Bot
         }
     }
 
-    public function action_auth(Update $update, $state)
+    public function action_auth($state, Update $update)
     {
         $parts = explode(" ", $update->message()->text);
         if (3 === count($parts)) {
@@ -112,9 +115,9 @@ EOD
         }
     }
 
-    function action_demo(Update $update, $state)
+    function action_demo($state, Update $update)
     {
-        $this->action_logout($update, $state);
+        $this->action_logout($state, $update);
 
         $megaplan = (new Megaplan())
             ->setHost($host = 'korchasa.megaplan.ru')
@@ -171,7 +174,7 @@ EOD
         $this->_actionTasksList($state, self::STATUS_ARCHIVE);
     }
 
-    function action_new_task(Update $update, $state)
+    function action_new_task($state, Update $update)
     {
         $text = $this->ltrim($update->message()->text, self::$new_task_prefixes);
         $resp1 = Megaplan::new($state)->post('/BumsCommonApiV01/UserInfo/id.api');
@@ -184,7 +187,7 @@ EOD
         $this->action_inbox($state);
     }
 
-    function action_complete_task(Update $update, $state)
+    function action_complete_task($state, Update $update)
     {
         $megaplan = Megaplan::new($state);
 
@@ -227,7 +230,7 @@ EOD
         $this->action_inbox($state);
     }
 
-    function action_delay_task(Update $update, $state)
+    function action_delay_task($state, Update $update)
     {
         $megaplan = Megaplan::new($state);
 
@@ -257,10 +260,31 @@ EOD
         $this->action_inbox($state);
     }
 
-    function action_help(Update $update)
+    function action_task_details($state, Update $update)
+    {
+        $megaplan = Megaplan::new($state);
+
+        $task = $megaplan->findOneTaskByName(
+            $update->message->reply_to_message->text,
+            array_merge(self::$megaplan_statuses_for_inbox, ['delayed', 'done', 'completed'])
+        );
+
+        $task_details = $megaplan->post('/BumsTaskApiV01/Task/card.api', [
+            'Id' => $task->Id
+        ])->data->task;
+
+        $update->replyMessage("
+<b>{$task->Name}</b>
+<i>{$task->Status}</i>
+
+".strip_tags($task_details->Statement, '<i><b>')."
+http://{$state->host}/task/{$task->Id}/card");
+    }
+
+    function action_help($state, Update $update)
     {
         $message = '
-С моей помощью вы можете:   
+С моей помощью вы можете:
 
 <b>Просматривать списки задач</b>
 Отправьте сообщение с любым словом из <i>'.implode('</i>, <i>', self::$tasks_list_prefixes).'</i> или используя команду /inbox.
@@ -279,13 +303,13 @@ EOD
         $update->replyMessage($message, $this->menu('help'));
     }
 
-    function action_help_with_unknown(Update $update)
+    function action_help_with_unknown($state, Update $update)
     {
         $update->replyMessage('Я не понимаю, что вы имеете ввиду.');
-        $this->action_help($update);
+        $this->action_help($state, $update);
     }
 
-    function action_logout(Update $update, $state)
+    function action_logout($state, Update $update)
     {
         $update->replyMessage('До свиданья!');
         $state->host = null;
@@ -307,7 +331,11 @@ EOD
         if (!$filtered_tasks) {
             $filtered_tasks = [(object) [
                 'Status' => 'new',
-                'Name' => '<b>'.ucfirst($this->status_name($status)).":</b>\nПусто"
+                'Name' => '<b>'.ucfirst($this->status_name($status)).":</b>\n"
+                    .(self::STATUS_INBOX === $status
+                        ? "Поздравляю, актуальных задач больше нет"
+                        : "Пусто"
+                    )
             ]];
         } else {
             $this->message(
