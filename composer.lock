@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7c6523a696668834c760580e89ba277b",
-    "content-hash": "4caa79e3885ab6a674003264fd5a7727",
+    "hash": "56b348bdd3c13d1a9cd00d470c86e8c4",
+    "content-hash": "022448b5a73b5bd27ec4dfddc4ab09d9",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -181,14 +181,20 @@
         {
             "name": "korchasa/telegram-php",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/korchasa/telegram-php.git",
+                "reference": "ef5de0c73e36ef12592bfcf3b40f0d1914100cb4"
+            },
             "dist": {
-                "type": "path",
-                "url": "/www/telegram-php/",
-                "reference": "54092a4b371792eece26a7fefed9490f99ea7b19",
-                "shasum": null
+                "type": "zip",
+                "url": "https://api.github.com/repos/korchasa/telegram-php/zipball/ef5de0c73e36ef12592bfcf3b40f0d1914100cb4",
+                "reference": "ef5de0c73e36ef12592bfcf3b40f0d1914100cb4",
+                "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "^6.2"
+                "guzzlehttp/guzzle": "^6.2",
+                "webmozart/assert": "^1.2"
             },
             "require-dev": {
                 "monolog/monolog": "^1.19",
@@ -206,6 +212,7 @@
                     "src/helpers.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -214,7 +221,8 @@
                     "name": "korchasa",
                     "email": "korchasa@gmail.com"
                 }
-            ]
+            ],
+            "time": "2017-01-10 12:31:37"
         },
         {
             "name": "larapack/dd",
@@ -624,6 +632,56 @@
                 "dump"
             ],
             "time": "2016-12-11 14:34:22"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozart/assert.git",
+                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/2db61e59ff05fe5126d152bd0655c9ea113e550f",
+                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.6",
+                "sebastian/version": "^1.0.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "time": "2016-11-23 20:04:58"
         }
     ],
     "packages-dev": [
@@ -2389,56 +2447,6 @@
                 "time"
             ],
             "time": "2013-03-28 15:26:25"
-        },
-        {
-            "name": "webmozart/assert",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
-                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/2db61e59ff05fe5126d152bd0655c9ea113e550f",
-                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.3.3 || ^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.6",
-                "sebastian/version": "^1.0.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Webmozart\\Assert\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                }
-            ],
-            "description": "Assertions to validate method input/output with nice error messages.",
-            "keywords": [
-                "assert",
-                "check",
-                "validate"
-            ],
-            "time": "2016-11-23 20:04:58"
         }
     ],
     "aliases": [],
