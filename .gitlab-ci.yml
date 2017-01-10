@@ -4,12 +4,13 @@ before_script:
   - apt-get update -yqq
   - apt-get install git -yqq
   - docker-php-ext-install bcmath
+  - docker-php-ext-install pcntl
   - curl -sS https://getcomposer.org/installer | php
   - php composer.phar install
 
 build:app:
   script:
-    - php -d phar.readonly=0 ./vendor/bin/phar-builder.php package ./composer.json
+    - php -d phar.readonly=0 ./vendor/bin/phar-builder.php -n -vv package ./composer.json
 
 pages:
   script:
