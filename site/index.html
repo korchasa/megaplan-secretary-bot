@@ -1,87 +1,159 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
+    <title>Title</title>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
-
-    <title>Plando - персональный секретарь для каждого</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <!--<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css" rel="stylesheet">-->
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
     <style>
-        @import url('https://fonts.googleapis.com/css?family=PT+Serif:400,400i,700,700i&subset=cyrillic');
+
+        @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,700&subset=latin,cyrillic);
 
         body {
-            font-family: "PT Serif", serif;
-            font-size: 16px;
-            line-height: 1.333;
-            color: #333;
+            font-family: 'Roboto Slab', sans-serif;
+            font-weight: 300;
+            line-height: 3em;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6 {
-            line-height: 1.2;
-            /*color: #fff;*/
-            /*background-color: #ef534b;*/
-            /*display: inline-block;*/
-            color: #000;
+        body, a {
+            color: #eee;
         }
+
+        body, .remark-container, .remark-slide-content {
+            background: #9b59b6;
+        }
+
+        body.red, body.red .remark-container, body.red .remark-slide-content {
+            background: #c0392b;
+        }
+
+        body.green, body.green .remark-container, body.green .remark-slide-content {
+            background: #16a085;
+        }
+
+        body.blue, body.blue .remark-container, body.blue .remark-slide-content {
+            background: #2980b9;
+        }
+
+        .remark-slide-scaler {
+            box-shadow: none;
+        }
+
+        .remark-slide-content {
+            font-size: 35px;
+        }
+
+        h1, h2, h3 {
+            font-weight: 400;
+        }
+
+        .remark-slide-content h1 {
+            font-size: 50px;
+            margin-bottom: 1em;
+        }
+
+        ol, ul {
+            padding: 0;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding-bottom: .5em;
+
+        }
+
+        ul > li:before {
+            content: "- ";
+        }
+
+        a {
+            text-decoration: underline;
+        }
+
+        sup {
+            vertical-align: baseline;
+            position: relative;
+            top: -1em;
+            font-size: 0.6em;
+        }
+
+        strong, b {
+            font-weight: 400;
+            color: #ffffff
+        }
+
+        .spacer {
+            display: block;
+            height: 80px;
+        }
+
+        .small, .small a {
+            font-weight: 100;
+            font-size: .8em;
+        }
+
+        .remark-code {
+            font-size: 20px;
+        }
+
+        .tags ul {
+            list-style: none;
+        }
+
+        .tags li {
+            display: inline;
+            background-color: rgba(256, 256, 256, .3);
+            padding: .4em;
+            margin: .1em;
+            font-size: .5em;
+            white-space: nowrap;
+        }
+
+        .tags ul > li:before {
+            content: none;
+        }
+
+        .photo img {
+            width: 100%;
+        }
+
+        .photo_small img {
+            width: 50%;
+        }
+
     </style>
 </head>
+<body class="red">
+<textarea id="source" style="display:none" title="">
 
-<body>
+class: middle
 
-<div class="container">
+# #Plando
+Персональный секретарь для каждого
 
-    <div class="page-header">
-        <h1>Plando</h1>
-        <p class="lead">Персональный секретарь для каждого</p>
-    </div>
+---
 
-    <h3>Задачи больше не потеряются</h3>
-    <p>Делегировать можно:</p>
-    <ul>
-        <li>Задачи в статусе “назначена” и “принята”, в которых постановщик или ответственный является вашим подчиненным.</li>
-        <li>Задачи в статусе “назначена” и “принята”, принадлежащие проекту, в котором вы являетесь менеджером.</li>
-    </ul>
+# Задачи больше не потеряются
+Делегировать можно:
+- Задачи в статусе “назначена” и “принята”, в которых постановщик или ответственный является вашим подчиненным
+- Задачи в статусе “назначена” и “принята”, принадлежащие проекту, в котором вы являетесь менеджером
 
-    <h3>Ничто не будет вас отвлекать</h3>
-    <p>Руководитель ставит задачи по почте, и сотрудники о них забывают. Отследить ход выполнения задач невозможно.</p>
-    <p>Клиентская база в таблице. Неизвестно, кто ждет вашего звонка и коммерческого предложения.</p>
+---
+#Ничто не будет вас отвлекать
+Руководитель ставит задачи по почте, и сотрудники о них забывают. Отследить ход выполнения задач невозможно.
+Клиентская база в таблице. Неизвестно, кто ждет вашего звонка и коммерческого предложения.
 
-    <h3>Минимум времени</h3>
-    <p>29 декабря в 11.00 по Москве вы сможете задать вопросы директору Мегаплана Сергею Козлову и поздравить друг друга с наступающими праздниками.</p>
+---
+#Минимум времени
+29 декабря в 11.00 по Москве вы сможете задать вопросы директору Мегаплана Сергею Козлову и поздравить друг друга с наступающими праздниками.
 
-</div> <!-- /container -->
-
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+    </textarea>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/remark/0.14.0/remark.min.js"></script>
+<script>
+    var slideshow = remark.create();
+</script>
 </body>
 </html>
