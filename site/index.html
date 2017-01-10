@@ -13,7 +13,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css" rel="stylesheet">-->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -22,7 +22,14 @@
     <![endif]-->
 
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=cyrillic-ext');
+        @import url('https://fonts.googleapis.com/css?family=PT+Serif:400,400i,700,700i&subset=cyrillic');
+
+        body {
+            font-family: "PT Serif", serif;
+            font-size: 16px;
+            line-height: 1.333;
+            color: #333;
+        }
 
         h1,
         h2,
@@ -36,10 +43,11 @@
         .h4,
         .h5,
         .h6 {
-            font-family: "Open Sans", Helvetica, Arial, sans-serif;
-            font-weight: bold;
-            line-height: 1.1;
-            color: inherit;
+            line-height: 1.2;
+            /*color: #fff;*/
+            /*background-color: #ef534b;*/
+            /*display: inline-block;*/
+            color: #000;
         }
     </style>
 </head>
@@ -53,17 +61,19 @@
         <p class="lead">Персональный секретарь для каждого</p>
     </div>
 
-    <div class="row">
-        <div class="col-sm-4 col-md-4">
-            <h3>Задачи больше не потеряются</h3>
-        </div>
-        <div class="col-sm-4 col-md-4">
-            <h3>Ничто не будет вас отвлекать</h3>
-        </div>
-        <div class="col-sm-4 col-md-4">
-            <h3>Минимум времени</h3>
-        </div>
-    </div>
+    <h3>Задачи больше не потеряются</h3>
+    <p>Делегировать можно:</p>
+    <ul>
+        <li>Задачи в статусе “назначена” и “принята”, в которых постановщик или ответственный является вашим подчиненным.</li>
+        <li>Задачи в статусе “назначена” и “принята”, принадлежащие проекту, в котором вы являетесь менеджером.</li>
+    </ul>
+
+    <h3>Ничто не будет вас отвлекать</h3>
+    <p>Руководитель ставит задачи по почте, и сотрудники о них забывают. Отследить ход выполнения задач невозможно.</p>
+    <p>Клиентская база в таблице. Неизвестно, кто ждет вашего звонка и коммерческого предложения.</p>
+
+    <h3>Минимум времени</h3>
+    <p>29 декабря в 11.00 по Москве вы сможете задать вопросы директору Мегаплана Сергею Козлову и поздравить друг друга с наступающими праздниками.</p>
 
 </div> <!-- /container -->
 
@@ -71,7 +81,7 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 </body>
 </html>
