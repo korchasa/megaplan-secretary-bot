@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "56b348bdd3c13d1a9cd00d470c86e8c4",
-    "content-hash": "022448b5a73b5bd27ec4dfddc4ab09d9",
+    "hash": "dd43fcff69ba8b9f0ed7fc0be158417b",
+    "content-hash": "016b57765e203da8a1a881cb9544e154",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -791,16 +791,16 @@
         },
         {
             "name": "macfja/phar-builder",
-            "version": "0.2.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/MacFJA/PharBuilder.git",
-                "reference": "0a5270b565242a99371ff94d2ebecb85b2854a1d"
+                "url": "https://github.com/korchasa/PharBuilder.git",
+                "reference": "093cdeb39dfabe96dbdef0f4181e064bb2d41ad1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MacFJA/PharBuilder/zipball/0a5270b565242a99371ff94d2ebecb85b2854a1d",
-                "reference": "0a5270b565242a99371ff94d2ebecb85b2854a1d",
+                "url": "https://api.github.com/repos/korchasa/PharBuilder/zipball/093cdeb39dfabe96dbdef0f4181e064bb2d41ad1",
+                "reference": "093cdeb39dfabe96dbdef0f4181e064bb2d41ad1",
                 "shasum": ""
             },
             "require": {
@@ -839,7 +839,14 @@
                     "MacFJA\\PharBuilder\\": "app/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "php -l app/",
+                    "phpmd app/ text phpmd.xml.dist",
+                    "phpcpd app/",
+                    "phpcs"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -849,7 +856,10 @@
                 }
             ],
             "description": "CLI tool for create phar of your composer based project",
-            "time": "2016-08-07 12:35:14"
+            "support": {
+                "source": "https://github.com/korchasa/PharBuilder/tree/master"
+            },
+            "time": "2017-01-11 00:24:40"
         },
         {
             "name": "macfja/symfony-console-filechooser",
@@ -2454,7 +2464,8 @@
     "stability-flags": {
         "rappasoft/laravel-helpers": 20,
         "korchasa/telegram-php": 20,
-        "megaplan/simple_client": 20
+        "megaplan/simple_client": 20,
+        "macfja/phar-builder": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

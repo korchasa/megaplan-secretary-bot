@@ -1,39 +1,49 @@
 {
-    "name": "korchasa/secretary-bot",
-    "authors": [
-        {
-            "name": "korchasa",
-            "email": "korchasa@gmail.com"
-        }
-    ],
-    "require": {
-        "rappasoft/laravel-helpers": "dev-master",
-        "larapack/dd": "^1.1",
-        "korchasa/telegram-php": "dev-master",
-        "monolog/monolog": "^1.22",
-        "megaplan/simple_client": "dev-master"
-    },
-    "extra": {
-        "phar-builder": {
-            "compression": "GZip",
-            "name": "bot.phar",
-            "output-dir": ".",
-            "entry-point": "bot.php",
-            "include-dev": false,
-            "events": {
-                "build.before" : "git describe --tags > version.txt",
-                "build.after": [
-                    "rm version.txt",
-                    "chmod +x bot.phar"
-                ]
-            }
-        }
-    },
-    "require-dev": {
-        "macfja/phar-builder": "^0.2.5",
-        "phpunit/phpunit": "^5.7"
-    },
-    "autoload": {
-        "psr-4": {"App\\": "src/"}
+  "name": "korchasa/secretary-bot",
+  "authors": [
+    {
+      "name": "korchasa",
+      "email": "korchasa@gmail.com"
     }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/korchasa/PharBuilder.git"
+    }
+  ],
+  "require": {
+    "rappasoft/laravel-helpers": "dev-master",
+    "larapack/dd": "^1.1",
+    "korchasa/telegram-php": "dev-master",
+    "monolog/monolog": "^1.22",
+    "megaplan/simple_client": "dev-master"
+  },
+  "extra": {
+    "phar-builder": {
+      "compression": "GZip",
+      "name": "bot.phar",
+      "output-dir": ".",
+      "entry-point": "bot.php",
+      "include": [],
+      "include-dev": false,
+      "skip-shebang": false,
+      "events": {
+        "build.before": "git describe --tags > version.txt",
+        "build.after": [
+          "rm version.txt",
+          "chmod +x bot.phar"
+        ]
+      }
+    }
+  },
+  "require-dev": {
+    "macfja/phar-builder": "dev-master",
+    "phpunit/phpunit": "^5.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
 }
