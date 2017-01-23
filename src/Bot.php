@@ -66,25 +66,23 @@ class Bot
         } elseif ($update->isCallbackQuery()) {
             return $update->callback_query->data;
         } elseif ($update->isReply()) {
-            $text = trim(mb_strtolower($update->message()->text));
-            if ($this->str_contains($text, self::$task_complete_words)) {
+            if ($update->message()->contains(self::$task_complete_words)) {
                 return 'complete_task';
-            } elseif ($this->str_contains($text, self::$task_details_words)) {
-                    return 'task_details';
+            } elseif ($update->message()->contains(self::$task_details_words)) {
+                return 'task_details';
             } else {
-                if (false !== strtotime($text)) {
+                if (false !== strtotime($update->message()->text)) {
                     return 'delay_task';
                 } else {
                     return 'help_with_unknown';
                 }
             }
         } elseif ($update->isText()) {
-            $text = trim(mb_strtolower($update->message()->text));
-            if ($this->starts_with($text, self::$tasks_list_prefixes)) {
+            if ($update->message()->contains(self::$tasks_list_prefixes)) {
                 return self::STATUS_INBOX;
-            } elseif ($this->starts_with($text, ['/'])) {
-                return mb_substr($text, 1);
-            } elseif ($this->starts_with($text, self::$new_task_prefixes)) {
+            } elseif ($update->message()->startWith(['/'])) {
+                return mb_substr($update->message()->text, 1);
+            } elseif ($update->message()->startWith(self::$new_task_prefixes)) {
                 return 'new_task';
             } else {
                 return 'help_with_unknown';
@@ -283,22 +281,32 @@ http://{$state->host}/task/{$task->Id}/card");
 
     function action_help($state, Update $update)
     {
-        $message = '
+        $message = "
 С моей помощью вы можете:
 
 <b>Просматривать списки задач</b>
-Отправьте сообщение с любым словом из <i>'.implode('</i>, <i>', self::$tasks_list_prefixes).'</i> или используя команду /inbox.
+Отправьте сообщение с любым словом из:
+<i>".implode('</i> | <i>', self::$tasks_list_prefixes)."</i>
+или используя команду /inbox
+
+<b>Смотреть подробности задачи</b>
+Ответьте на сообщение с задачем, любым словом из:\n<i>".implode('</i> | <i>', self::$task_details_words)."</i>
 
 <b>Создавать задачи</b>
 Отправляйте сообщения после знака <b>+</b>
-    <i>+ Проверить договор по ООО "Нога и корыто"</i>
+
+Например: <i>+ Проверить договор по ООО \"Нога и корыто\"</i>
 
 <b>Откладывать задачи</b>
 Ответьте на сообщение с задачей, указав время
-    <i>15 min</i> | <i>next week</i> | <i>2017.01.01 07:00</i>
+
+Например: <i>15 min</i> | <i>next week</i> | <i>2017.01.01 07:00</i>
 
 <b>Завершать задачи</b>
-Ответьте на сообщение с задачей, с любым словом из <i>'.implode('</i>, <i>', self::$task_complete_words).'</i>.
+Ответьте на сообщение с задачей, с любым словом из:
+<i>".implode('</i> | <i>', self::$task_complete_words).'</i>
+
+Ваш ответ будет добавлен комментарием в задачу.
 ';
         $update->replyMessage($message, $this->menu('help'));
     }
@@ -463,26 +471,6 @@ http://{$state->host}/task/{$task->Id}/card");
         }
 
         return $string;
-    }
-
-    function starts_with($haystack, $needles)
-    {
-        foreach ($needles as $needle) {
-            if (starts_with($haystack, mb_strtolower($needle))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function str_contains($haystack, $needles)
-    {
-        foreach ($needles as $needle) {
-            if (str_contains($haystack, mb_strtolower($needle))) {
-                return true;
-            }
-        }
-        return false;
     }
 
     function message(
